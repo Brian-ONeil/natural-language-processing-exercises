@@ -117,6 +117,25 @@ def remove_stopwords(text, extra_words=None, exclude_words=None):
     
     return filtered_text, stopword_list
 
+def get_clean_news_articles():
+    '''explanation'''
+    
+    topics = ['business', 'sports', 'technology', 'entertainment']
 
+    final_list = acq.get_news_articles(topics)
 
+    # turn that bad boy into a df
 
+    final_df = pd.DataFrame(final_list)
+    
+    final_df = final_df.rename(columns={'content':'original'}).drop(columns='category')
+    
+    final_df['clean'] = final_df['original'].apply(prep.basic_clean)
+    
+    final_df['tokenized'] = final_df['clean'].apply(prep.tokenize)
+    
+    final_df['stemmed'] = final_df['tokenized'].apply(prep.stem)
+    
+    final_df['lemmatized'] = final_df['stemmed'].apply(prep.lemmatize)
+    
+    return final_df
